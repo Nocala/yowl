@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { theme } from '../constants/theme'
+import API_CONFIG from '../config/api'
 
 const Post_txt = ({ title, description, username, likes }) => {
   return (

@@ -3,6 +3,7 @@ import { View, Text, Image, StyleSheet, Alert } from 'react-native'
 import { theme } from '../constants/theme'
 import Button from '../components/Button'
 import * as SecureStore from 'expo-secure-store'
+import API_CONFIG from '../config/api'
 
 const Event = ({ name, date, lieu, sport, genre, description, id_media, eventId, token }) => {
   const [imageUrl, setImageUrl] = useState(null);
@@ -11,14 +12,16 @@ const Event = ({ name, date, lieu, sport, genre, description, id_media, eventId,
 
   useEffect(() => {
     if (id_media) {
-      setImageUrl(`http://16.171.155.129:3000/media/id/${id_media}`);
+      const url = API_CONFIG.buildUrl(API_CONFIG.ENDPOINTS.MEDIA_BY_ID(id_media));
+      setImageUrl(url);
     }
   }, [id_media]);
 
   useEffect(() => {
     const fetchParticipantsData = async () => {
       try {
-        const response = await fetch(`http://16.171.155.129:3000/events/${eventId}/participants/count`);
+        const url = API_CONFIG.buildUrl(API_CONFIG.ENDPOINTS.EVENT_PARTICIPANTS_COUNT(eventId));
+        const response = await fetch(url);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         setParticipantsData(data);
@@ -59,12 +62,10 @@ const Event = ({ name, date, lieu, sport, genre, description, id_media, eventId,
             onPress: async () => {
               try {
                 console.log(`Envoi de la requête avec token: ${token}`);
-                const response = await fetch(`http://16.171.155.129:3000/events/${eventId}/participants`, {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                  },
+                const url = API_CONFIG.buildUrl(API_CONFIG.ENDPOINTS.EVENT_PARTICIPANTS(eventId));
+                const response = await fetch(url, {
+                  method: API_CONFIG.METHODS.POST,
+                  headers: API_CONFIG.REQUEST_CONFIG.withAuth(token),
                 });
 
                 const result = await response.json();

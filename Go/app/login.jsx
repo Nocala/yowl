@@ -9,6 +9,7 @@ import { hp, wp } from '../helpers/common'
 import { theme } from '../constants/theme'
 import Input from '../components/Input'
 import Button from '../components/Button'
+import API_CONFIG from '../config/api'
 
 const Login = () => {
     const router = useRouter();
@@ -58,22 +59,17 @@ const Login = () => {
         setLoading(true);
 
         try {
-            const response = await fetch('http://16.171.155.129:3000/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    email,
-                    password,
-                }),
+            const response = await fetch(API_CONFIG.buildUrl(API_CONFIG.ENDPOINTS.LOGIN), {
+                method: API_CONFIG.METHODS.POST,
+                headers: API_CONFIG.REQUEST_CONFIG.DEFAULT_HEADERS,
+                body: JSON.stringify({ email, password }),
             });
 
             const data = await response.json();
-
+            
             if (response.ok) {
                 await SecureStore.setItemAsync("authToken", data.token);
-
+                
                 const storedToken = await SecureStore.getItemAsync("authToken");
                 console.log("Token stocké avec succès :", storedToken);
                 Alert.alert('Tu es connecté !', 'Bon retour parmi nous 🥹', [

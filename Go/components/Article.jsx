@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View, Image } from 'react-native'
 import { theme } from '../constants/theme'
+import API_CONFIG from '../config/api'
 
 const Article = ({ title, description, sport, date, id_media, author }) => {
   const [imageUrl, setImageUrl] = useState(null)
 
   useEffect(() => {
     if (id_media) {
-      const url = `http://16.171.155.129:3000/media/id/${id_media}`
-      setImageUrl(url)
+      const url = API_CONFIG.buildUrl(API_CONFIG.ENDPOINTS.MEDIA_BY_ID(id_media));
+      setImageUrl(url);
     }
   }, [id_media])
 

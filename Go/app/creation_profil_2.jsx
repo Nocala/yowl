@@ -7,17 +7,18 @@ import { hp, wp } from '../helpers/common'
 import { useRouter } from 'expo-router'
 import Button from '../components/Button'
 import * as SecureStore from 'expo-secure-store';
-
+import API_CONFIG from '../config/api'
+ 
 const creation_profil_2 = ({ }) => {
   const router = useRouter();
   const [sports, setSports] = useState([]);
   const [selectedSports, setSelectedSports] = useState({});
   const [userId, setUserId] = useState(null);
-
+ 
   useEffect(() => {
     const fetchSports = async () => {
       try {
-        const response = await fetch('http://16.171.155.129:3000/sports');
+        const response = await fetch(API_CONFIG.buildUrl(API_CONFIG.ENDPOINTS.SPORTS));
         const data = await response.json();
         if (response.ok) {
           //console.log('Sports fetched successfully:', data);
@@ -31,9 +32,9 @@ const creation_profil_2 = ({ }) => {
         setSports([]);
       }
     };
-
+ 
     fetchSports();
-
+ 
     const fetchUsername = async () => {
       const storedUsername = await SecureStore.getItemAsync('username');
       if (storedUsername) {
@@ -42,54 +43,52 @@ const creation_profil_2 = ({ }) => {
       }
     };
     fetchUsername();
-
+ 
   }, []);
-
+ 
   const handlePress = (id_sport) => {
     setSelectedSports((prevSelectedSports) => ({
       ...prevSelectedSports,
       [id_sport]: !prevSelectedSports[id_sport],
     }));
   };
-
+ 
   const handleSubmit = async () => {
     const sportsArray = Object.keys(selectedSports).filter((id) => selectedSports[id]);
-
+ 
     if (sportsArray.length === 0) {
       Alert.alert('Attention', "Choisis au moins un sport pour continuer 🏀");
       return;
     }
-
-
+ 
+ 
     const sportsNames = sportsArray.map(id => {
       const sport = sports.find(sport => sport.id_sport === parseInt(id));
       return sport ? sport.name : null;
     });
-
+ 
     const formData = {
       username: userId,
       sports_suivis: sportsNames,
     };
-
+ 
     //console.log("Username envoyé à l'API:", userId);
-
+ 
     if (!userId) {
       alert("Le username n'a pas été récupéré. Assurez-vous qu'il est stocké correctement.");
       return;
     }
-
+ 
     try {
-      const response = await fetch('http://16.171.155.129:3000/profil-2-2', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      const response = await fetch(API_CONFIG.buildUrl(API_CONFIG.ENDPOINTS.PROFIL_2_2), {
+        method: API_CONFIG.METHODS.PUT,
+        headers: API_CONFIG.REQUEST_CONFIG.DEFAULT_HEADERS,
         body: JSON.stringify(formData),
       });
-
+ 
       const data = await response.json();
       console.log("Réponse de l'API:", data);
-
+ 
       if (response.ok) {
         Alert.alert('Ca y est', "Ton profil a été créé avec succès 🎉");
         router.push('home');
@@ -100,7 +99,7 @@ const creation_profil_2 = ({ }) => {
       console.error("Erreur lors de l'envoi :", error);
     }
   };
-
+ 
   return (
     <ImageBackground source={require('../assets/images/background_login.png')} style={styles.background}>
       <ScreenWrapper>
@@ -133,9 +132,9 @@ const creation_profil_2 = ({ }) => {
     </ImageBackground>
   );
 }
-
+ 
 export default creation_profil_2;
-
+ 
 const styles = StyleSheet.create({
   background: {
     flex: 1,

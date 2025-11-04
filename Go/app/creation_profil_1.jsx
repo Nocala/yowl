@@ -8,6 +8,7 @@ import { StatusBar } from 'expo-status-bar'
 import { theme } from '../constants/theme'
 import { hp, wp } from '../helpers/common'
 import Button from '../components/Button'
+import API_CONFIG from '../config/api'
 
 const defaultProfileImage = require('../assets/images/profile-defaut.jpeg');
 
@@ -32,7 +33,7 @@ const creation_profil_1 = ({ size = 60 }) => {
   useEffect(() => {
     const fetchSports = async () => {
       try {
-        const response = await fetch('http://16.171.155.129:3000/sports');
+        const response = await fetch(API_CONFIG.buildUrl(API_CONFIG.ENDPOINTS.SPORTS));
         const data = await response.json();
         if (response.ok) {
           setSports(data);
@@ -110,8 +111,8 @@ const creation_profil_1 = ({ size = 60 }) => {
     }
 
     try {
-      const response = await fetch('http://16.171.155.129:3000/profil-1-2', {
-        method: 'POST',
+      const response = await fetch(API_CONFIG.buildUrl(API_CONFIG.ENDPOINTS.PROFIL_1_2), {
+        method: API_CONFIG.METHODS.POST,
         body: formData,
       });
 

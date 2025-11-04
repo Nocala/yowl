@@ -9,6 +9,7 @@ import { theme } from '../constants/theme'
 import ScreenWrapper from '../components/ScreenWrapper'
 import { StatusBar } from 'expo-status-bar'
 import * as SecureStore from 'expo-secure-store'
+import API_CONFIG from '../config/api'
 
 const SignUp = () => {
     const router = useRouter();
@@ -64,11 +65,9 @@ const SignUp = () => {
         setLoading(true);
 
         try {
-            const response = await fetch('http://16.171.155.129:3000/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+            const response = await fetch(API_CONFIG.buildUrl(API_CONFIG.ENDPOINTS.REGISTER), {
+                method: API_CONFIG.METHODS.POST,
+                headers: API_CONFIG.REQUEST_CONFIG.DEFAULT_HEADERS,
                 body: JSON.stringify({
                     username,
                     email,

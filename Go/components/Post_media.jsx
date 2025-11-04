@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View, Image } from 'react-native'
 import { theme } from '../constants/theme'
+import API_CONFIG from '../config/api'
 
 const Post_media = ({ description, username, likes, id_media }) => {
   const [imageUrl, setImageUrl] = useState(null);
